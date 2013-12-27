@@ -25,23 +25,27 @@ public class PlaceholderFragment extends Fragment {
 
     boolean justAttached = false;
 
-    MainActivity activity;
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         justAttached = true;
-        if (activity instanceof MainActivity) {
-            this.activity = (MainActivity) activity;
-        }
     }
 
     @AfterViews
     public void afterViewInjection() {
         sectionLabel.setText("This is Section " + sectionNumber);
-        if (justAttached && activity != null) {
-            activity.setActionBarTitle("Fragment - " + sectionNumber);
+        if (justAttached && getMainActivity() != null) {
+            getMainActivity().setActionBarTitle("Fragment - " + sectionNumber);
             justAttached = false;
+        }
+    }
+
+    private MainActivity getMainActivity() {
+        Activity activity = getActivity();
+        if (activity != null && activity instanceof MainActivity) {
+            return (MainActivity) activity;
+        } else {
+            return null;
         }
     }
 }

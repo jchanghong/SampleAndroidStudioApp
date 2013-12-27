@@ -1,14 +1,20 @@
 package com.testapp.activities;
 
 import android.app.Activity;
-import android.util.Log;
+import android.content.Intent;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.googlecode.androidannotations.annotations.Background;
+import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EActivity;
+import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.testapp.R;
+import com.testapp.services.LoginService;
+import com.testapp.util.TACallback;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -23,14 +29,15 @@ public class LoginActivity extends Activity {
     @ViewById(R.id.password)
     EditText passwordTextView;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello",
-            "bar@example.com:world"
-    };
+    @ViewById(R.id.login_status)
+    View loginStatusView;
+
+    @ViewById(R.id.login_form)
+    View loginFormView;
+
+    @Bean
+    LoginService loginService;
+
 
     @Click(R.id.sign_in_button)
     public void tryLogin() {
@@ -40,7 +47,6 @@ public class LoginActivity extends Activity {
         String email = emailTextView.getText().toString();
         String password = passwordTextView.getText().toString();
         boolean validated = true;
-        boolean authenticated = false;
 
         //validate login
         if (email == null || email.isEmpty()) {
@@ -57,20 +63,30 @@ public class LoginActivity extends Activity {
             return;
         }
 
+        loginService.attemptLogin(email, password, new TACallback<Boolean>() {
 
-        for (String cred : DUMMY_CREDENTIALS) {
-            String[] parts = cred.split(":");
-            if (email.equals(parts[0])
-                    && password.equals(parts[1])) {
-                authenticated = true;
-                break;
+            @Override
+            public void onCallback(Boolean authenticated) {
+                onLoginReturn(authenticated);
             }
-        }
 
+        });
+
+        loginStatusView.setVisibility(View.VISIBLE);
+        loginFormView.setVisibility(View.GONE);
+    }
+
+    @UiThread
+    void onLoginReturn(Boolean authenticated) {
+        loginFormView.setVisibility(View.VISIBLE);
+        loginStatusView.setVisibility(View.GONE);
         if (authenticated) {
-            Toast.makeText(this, "Successfully Logged In!!", 5000).show();
+            Toast.makeText(LoginActivity.this, "Successfully Logged In!!", 5000).show();
+            Intent loginIntent = new Intent(this, MainActivity.class);
+            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(loginIntent);
         } else {
-            Toast.makeText(this, "Login Failed, Please Try Again", 5000).show();
+            Toast.makeText(LoginActivity.this, "Login Failed, Please Try Again", 5000).show();
         }
     }
 

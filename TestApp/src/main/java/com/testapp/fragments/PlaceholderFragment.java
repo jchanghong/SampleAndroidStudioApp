@@ -23,20 +23,16 @@ public class PlaceholderFragment extends Fragment {
     @FragmentArg
     int sectionNumber = -1;
 
-    boolean justAttached = false;
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        justAttached = true;
     }
 
     @AfterViews
     public void afterViewInjection() {
         sectionLabel.setText("This is Section " + sectionNumber);
-        if (justAttached && getMainActivity() != null) {
+        if (isAdded() && getMainActivity() != null) {
             getMainActivity().setActionBarTitle("Fragment - " + sectionNumber);
-            justAttached = false;
         }
     }
 

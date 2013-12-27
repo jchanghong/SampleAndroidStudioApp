@@ -1,15 +1,12 @@
 package com.testapp.fragments;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.EFragment;
+import com.googlecode.androidannotations.annotations.FragmentArg;
 import com.googlecode.androidannotations.annotations.ViewById;
 import com.testapp.R;
 import com.testapp.activities.MainActivity;
@@ -19,38 +16,32 @@ import com.testapp.activities.MainActivity;
  */
 @EFragment(R.layout.fragment_main)
 public class PlaceholderFragment extends Fragment {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    private static final String ARG_SECTION_NUMBER = "section_number";
 
     @ViewById(R.id.section_label)
     TextView sectionLabel;
 
+    @FragmentArg
     int sectionNumber = -1;
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
-    public static PlaceholderFragment newInstance(int sectionNumber) {
-        PlaceholderFragment fragment = new PlaceholderFragment_();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    boolean justAttached = false;
+
+    MainActivity activity;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-        ((MainActivity) activity).onSectionAttached(sectionNumber);
+        justAttached = true;
+        if (activity instanceof MainActivity) {
+            this.activity = (MainActivity) activity;
+        }
     }
 
     @AfterViews
     public void afterViewInjection() {
         sectionLabel.setText("This is Section " + sectionNumber);
+        if (justAttached && activity != null) {
+            activity.setActionBarTitle("Fragment - " + sectionNumber);
+            justAttached = false;
+        }
     }
 }

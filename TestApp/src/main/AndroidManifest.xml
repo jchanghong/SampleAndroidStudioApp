@@ -29,7 +29,7 @@
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
-            android:name="com.testapp.activities.MainActivity"
+            android:name="com.testapp.activities.MainActivity_"
             android:screenOrientation="portrait"
             android:configChanges="orientation"
             android:label="@string/title_activity_main" >

@@ -78,15 +78,13 @@ public class LoginActivity extends Activity {
 
     @UiThread
     void onLoginReturn(Boolean authenticated) {
-        loginFormView.setVisibility(View.VISIBLE);
-        loginStatusView.setVisibility(View.GONE);
         if (authenticated) {
             Toast.makeText(LoginActivity.this, "Successfully Logged In!!", 5000).show();
-            Intent loginIntent = new Intent(this, MainActivity.class);
-            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(loginIntent);
+            MainActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
         } else {
             Toast.makeText(LoginActivity.this, "Login Failed, Please Try Again", 5000).show();
+            loginFormView.setVisibility(View.VISIBLE);
+            loginStatusView.setVisibility(View.GONE);
         }
     }
 

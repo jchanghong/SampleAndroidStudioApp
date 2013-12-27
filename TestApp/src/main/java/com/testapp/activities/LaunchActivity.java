@@ -9,9 +9,7 @@ public class LaunchActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent loginIntent = new Intent(this, LoginActivity_.class);
-        loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(loginIntent);
+        LoginActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
     }
 
 }
